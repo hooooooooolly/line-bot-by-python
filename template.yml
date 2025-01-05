@@ -1,0 +1,64 @@
+# この AWS SAM テンプレートは、関数の設定から生成されました。関数に 1 つ以上のトリガーがある場合は、これらのトリガーに関連付けられている AWS
+# リソースがこのテンプレートで完全に指定されておらず、プレースホルダ値も含まれていないことに注意してください。AWS Infrastructure
+# Composer またはお気に入りの IDE でこのテンプレートを開き、他の AWS リソースでサーバーレスアプリケーションを指定するように変更します。
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Serverless Application Model template describing your function.
+Resources:
+  [INPUT_YOUR_RESOURCE_NAME]:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Description: A starter AWS Lambda function.
+      MemorySize: 128
+      Timeout: 3
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - x86_64
+      EphemeralStorage:
+        Size: 512
+      Environment:
+        Variables:
+          LINE_CHANNEL_ACCESS_TOKEN: >-
+            [INPUT_YOUR_LINE_CHANNEL_ACCESS_TOKEN]
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 21600
+        MaximumRetryAttempts: 2
+      Layers:
+        - !Ref Layer1
+      PackageType: Zip
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+              Resource: [INPUT_YOUR_RESOURCE_ARN]
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource:
+                - >-
+                  [INPUT_YOUR_RESOURCE_ARN]
+      RecursiveLoop: Terminate
+      SnapStart:
+        ApplyOn: None
+      Tags:
+        lambda-console:blueprint: hello-world-python
+      Events:
+        Api1:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
+# with line-bot-sdk-3.14.2
+#  Layer1:
+#    Type: AWS::Serverless::LayerVersion
+#    Properties:
+#      ContentUri: ./linebot
+#      LayerName: linebot
+#      CompatibleRuntimes:
+#        - python3.12
